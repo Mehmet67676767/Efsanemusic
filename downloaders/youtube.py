@@ -11,6 +11,7 @@ ydl_opts = {
     "geo-bypass": True,
     "nocheckcertificate": True,
     "outtmpl": "downloads/%(id)s.%(ext)s",
+    "cookiefile": "cookies.txt",  # YouTube cookie desteği
 }
 ydl = YoutubeDL(ydl_opts)
 
@@ -20,8 +21,6 @@ def download(url: str) -> str:
     duration = round(info["duration"] / 60)
     if duration > DURATION_LIMIT:
         raise DurationLimitError(
-            f"🛑 Videos longer than {DURATION_LIMIT} minute(s) aren't allowed, "
-            f"the provided video is {duration} minute(s)",
+            f"This video is too long: {duration} minutes."
         )
-    ydl.download([url])
-    return path.join("downloads", f"{info['id']}.{info['ext']}")
+    return ydl.prepare_filename(info)
